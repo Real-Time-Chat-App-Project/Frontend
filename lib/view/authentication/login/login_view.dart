@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
+import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
 
 import '../../_widgets/_component/text_field.dart';
 
@@ -13,6 +14,10 @@ class LoginView extends StatelessWidget {
     bool _visibility = false;
 
     return Scaffold(
+      //
+      // to control the widgets when the keyboard slides up and slides back down.
+      // When true, the layout of the widgets scrolls when the keyboard is opened. And gives an error.
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Container(
           width: 350,
@@ -68,8 +73,9 @@ class LoginView extends StatelessWidget {
       const Text('Not a member?'),
       TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, signUpPageRoute);
-            // TODO:: go register page
+            NavigationService.instance
+                .navigateToPage(path: signUpPageRoute, data: '_');
+            //Navigator.pushNamed(context, signUpPageRoute);
           },
           child: const Text('Register now'))
     ]);
