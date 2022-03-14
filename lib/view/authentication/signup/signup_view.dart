@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
+import 'package:real_time_chat_app/core/constants/navigation/router.dart';
+import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 
 import '../../_widgets/_component/text_field.dart';
 
@@ -45,7 +47,7 @@ class SignUpView extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               const SizedBox(height: 50),
-              textLogin(),
+              textLogin(context),
             ],
           ),
         ),
@@ -53,11 +55,12 @@ class SignUpView extends StatelessWidget {
     );
   }
 
-  Row textLogin() {
+  Row textLogin(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Text('Already have an account?'),
       TextButton(
           onPressed: () {
+            Navigator.pushNamed(context, logInPageRoute);
             // TODO:: go register page
           },
           child: const Text('Log In'))
@@ -69,7 +72,9 @@ class SignUpView extends StatelessWidget {
       height: 50,
       width: 350,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          //generateRoute(signUpPageRoute);
+        },
         child: const Text('Sign Up'),
         style: ElevatedButton.styleFrom(
             primary: Colors.pink,
