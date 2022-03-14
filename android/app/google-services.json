@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "197161488651",
+    "project_id": "real-time-chat-app-5f7ba",
+    "storage_bucket": "real-time-chat-app-5f7ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197161488651:android:c64354168b983a20b3d20e",
+        "android_client_info": {
+          "package_name": "com.emincingoz.real_time_chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197161488651-o97fqalskbn4o61l799kdmqqp9p3fkev.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0SiX1bsUGwulOtJke9SPcvy5h1eyHrIE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "197161488651-o97fqalskbn4o61l799kdmqqp9p3fkev.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
