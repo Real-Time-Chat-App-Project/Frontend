@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
+import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 
 import '../../_widgets/_component/text_field.dart';
 
@@ -54,7 +55,7 @@ class LoginView extends StatelessWidget {
               const SizedBox(height: 35),
               signInWithGoogle(),
               const SizedBox(height: 50),
-              textRegisterNow(),
+              textRegisterNow(context),
             ],
           ),
         ),
@@ -62,11 +63,12 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Row textRegisterNow() {
+  Row textRegisterNow(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Text('Not a member?'),
       TextButton(
           onPressed: () {
+            Navigator.pushNamed(context, signUpPageRoute);
             // TODO:: go register page
           },
           child: const Text('Register now'))
