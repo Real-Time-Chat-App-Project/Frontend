@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kartal/kartal.dart';
-import 'package:real_time_chat_app/core/constants/navigation/router.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
+import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
 
 import '../../_widgets/_component/text_field.dart';
 
@@ -14,6 +14,7 @@ class SignUpView extends StatelessWidget {
     bool _visibility = false;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Container(
           width: 350,
@@ -60,8 +61,9 @@ class SignUpView extends StatelessWidget {
       const Text('Already have an account?'),
       TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, logInPageRoute);
-            // TODO:: go register page
+            NavigationService.instance
+                .navigateToPage(path: logInPageRoute, data: '_');
+            //Navigator.pushNamed(context, logInPageRoute);
           },
           child: const Text('Log In'))
     ]);

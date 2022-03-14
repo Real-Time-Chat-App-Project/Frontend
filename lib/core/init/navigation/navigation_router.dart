@@ -3,8 +3,14 @@ import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/view/authentication/login/login_view.dart';
 import 'package:real_time_chat_app/view/authentication/signup/signup_view.dart';
 
-class MyRouter {
-  static Route<dynamic> generateRoute(RouteSettings settings) {
+class NavigationRouter {
+  //
+  static NavigationRouter _instance = NavigationRouter._init();
+  static NavigationRouter get instance => _instance;
+
+  NavigationRouter._init();
+
+  Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case signUpPageRoute:
         return _getPageRoute(const SignUpView());
