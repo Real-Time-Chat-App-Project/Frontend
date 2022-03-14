@@ -1,0 +1,17 @@
+import 'package:flutter/material.dart';
+
+import 'view/authentication/login/login_view.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(scaffoldBackgroundColor: Colors.grey.withOpacity(.2)),
+      debugShowCheckedModeBanner: false,
+      title: 'Real-Time Messaging',
+      home: const LoginView(),
+    );
+  }
+}
