@@ -3,8 +3,8 @@ import 'package:kartal/kartal.dart';
 
 import '../../_widgets/_component/text_field.dart';
 
-class LoginView extends StatelessWidget {
-  const LoginView({Key? key}) : super(key: key);
+class SignUpView extends StatelessWidget {
+  const SignUpView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,42 +19,33 @@ class LoginView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Hello Again!',
+                'Sign Up',
                 style: TextStyle(
                     fontSize: context.mediumValue, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               Text(
-                "Wellcome back you've",
+                "Create an account, It's free",
                 style: TextStyle(color: Colors.black.withOpacity(.7)),
               ),
-              const SizedBox(height: 3),
-              Text(
-                'been missed',
-                style: TextStyle(color: Colors.black.withOpacity(.7)),
-              ),
-              const SizedBox(height: 30),
-              textFieldEnterUsername(),
+              const SizedBox(height: 40),
+              textFieldUsername(),
+              const SizedBox(height: 15),
+              textFieldEmail(),
               const SizedBox(height: 15),
               textFieldPassword(_visibility),
-              const SizedBox(height: 20),
-              textRecoveryPassword(),
-              const SizedBox(height: 30),
-              buttonLogin(),
+              const SizedBox(height: 15),
+              textFieldConfirmPassword(),
+              const SizedBox(height: 75),
+              buttonSignUp(),
               const SizedBox(height: 25),
               Divider(
                 color: Colors.black.withOpacity(.5),
                 thickness: .1,
               ),
               const SizedBox(height: 5),
-              Text(
-                'Login with',
-                style: TextStyle(color: Colors.black.withOpacity(.7)),
-              ),
-              const SizedBox(height: 35),
-              signInWithGoogle(),
               const SizedBox(height: 50),
-              textRegisterNow(),
+              textLogin(),
             ],
           ),
         ),
@@ -62,33 +53,24 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Row textRegisterNow() {
+  Row textLogin() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      const Text('Not a member?'),
+      const Text('Already have an account?'),
       TextButton(
           onPressed: () {
             // TODO:: go register page
           },
-          child: const Text('Register now'))
+          child: const Text('Log In'))
     ]);
   }
 
-  InkWell signInWithGoogle() {
-    return InkWell(
-      onTap: () {
-        // TODO:: google sign in add
-      },
-      child: Image.asset('assets/icons/google.png'),
-    );
-  }
-
-  SizedBox buttonLogin() {
+  SizedBox buttonSignUp() {
     return SizedBox(
       height: 50,
       width: 350,
       child: ElevatedButton(
         onPressed: () {},
-        child: const Text('Login'),
+        child: const Text('Sign Up'),
         style: ElevatedButton.styleFrom(
             primary: Colors.pink,
             shape: RoundedRectangleBorder(
@@ -97,20 +79,18 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Row textRecoveryPassword() {
-    return Row(
-      children: [
-        Expanded(child: Container()),
-        InkWell(
-          onTap: () {
-            // TODO:: Password Recovery
-          },
-          child: Text(
-            'Recovery Password',
-            style: TextStyle(color: Colors.black.withOpacity(.5)),
-          ),
+  TextField textFieldConfirmPassword() {
+    return TextField(
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        //labelText: 'Password',
+        hintText: 'Confirm Password',
+        border: OutlineInputBorder(
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(20),
         ),
-      ],
+      ),
     );
   }
 
@@ -141,13 +121,28 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  TextField textFieldEnterUsername() {
+  TextField textFieldEmail() {
     return TextField(
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
         //labelText: 'Enter Username',
-        hintText: 'Enter Username',
+        hintText: 'E-mail',
+        border: OutlineInputBorder(
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+    );
+  }
+
+  TextField textFieldUsername() {
+    return TextField(
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white,
+        //labelText: 'Enter Username',
+        hintText: 'Username',
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(20),
