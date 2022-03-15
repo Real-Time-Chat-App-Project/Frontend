@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
+import 'package:real_time_chat_app/core/controllers/signup/signup_controllers.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
+import 'package:real_time_chat_app/view/authentication/service/authentication_service.dart';
 
 import '../../_widgets/_component/text_field.dart';
 
 class SignUpView extends StatelessWidget {
-  const SignUpView({Key? key}) : super(key: key);
+  SignUpView({Key? key}) : super(key: key);
+
+  //
+  SignUpControllers _controller = Get.put(SignUpControllers());
+  final _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -18,38 +25,42 @@ class SignUpView extends StatelessWidget {
       body: Center(
         child: Container(
           width: 350,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Sign Up',
-                style: TextStyle(
-                    fontSize: context.mediumValue, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "Create an account, It's free",
-                style: TextStyle(color: Colors.black.withOpacity(.7)),
-              ),
-              const SizedBox(height: 40),
-              textFieldUsername(),
-              const SizedBox(height: 15),
-              textFieldEmail(),
-              const SizedBox(height: 15),
-              textFieldPassword(_visibility),
-              const SizedBox(height: 15),
-              textFieldConfirmPassword(),
-              const SizedBox(height: 75),
-              buttonSignUp(),
-              const SizedBox(height: 25),
-              Divider(
-                color: Colors.black.withOpacity(.5),
-                thickness: .1,
-              ),
-              const SizedBox(height: 5),
-              const SizedBox(height: 50),
-              textLogin(context),
-            ],
+          child: Form(
+            key: _formkey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Sign Up',
+                  style: TextStyle(
+                      fontSize: context.mediumValue,
+                      fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  "Create an account, It's free",
+                  style: TextStyle(color: Colors.black.withOpacity(.7)),
+                ),
+                const SizedBox(height: 40),
+                textFieldUsername(),
+                const SizedBox(height: 15),
+                textFieldEmail(),
+                const SizedBox(height: 15),
+                textFieldPassword(_visibility),
+                const SizedBox(height: 15),
+                textFieldConfirmPassword(),
+                const SizedBox(height: 75),
+                buttonSignUp(),
+                const SizedBox(height: 25),
+                Divider(
+                  color: Colors.black.withOpacity(.5),
+                  thickness: .1,
+                ),
+                const SizedBox(height: 5),
+                const SizedBox(height: 50),
+                textLogin(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -75,7 +86,18 @@ class SignUpView extends StatelessWidget {
       width: 350,
       child: ElevatedButton(
         onPressed: () {
+          if (!(_formkey.currentState!.validate())) return;
+          // TODO:: password and confirmPassword must be the same
+          //AuthenticationService.signUp(
+          //'emincingoz@gmail.com', '123456');
           //generateRoute(signUpPageRoute);
+          print(
+              'username: ${_controller.usernameController.text}\nEmail: ${_controller.emailController.text}\nPassword: ${_controller.passwordController.text}');
+
+          AuthenticationService.signUp(
+              _controller.usernameController.text,
+              _controller.emailController.text,
+              _controller.passwordController.text);
         },
         child: const Text('Sign Up'),
         style: ElevatedButton.styleFrom(
@@ -86,8 +108,15 @@ class SignUpView extends StatelessWidget {
     );
   }
 
-  TextField textFieldConfirmPassword() {
-    return TextField(
+  TextFormField textFieldConfirmPassword() {
+    return TextFormField(
+      validator: (val) {
+        if (val!.trim() == "") {
+          return "Check your Email!";
+        }
+        return null;
+      },
+      controller: _controller.confirmPasswordController,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -101,8 +130,18 @@ class SignUpView extends StatelessWidget {
     );
   }
 
-  TextField textFieldPassword(bool _visibility) {
-    return TextField(
+  TextFormField textFieldPassword(bool _visibility) {
+    return TextFormField(
+      validator: (val) {
+        if (val!.trim() == "") {
+          return "Check your Password!";
+        }
+        return null;
+      },
+      controller: _controller.passwordController,
+      // TODO::
+      // Şifre gizlemek için bunu da SignupController içerisinde tanımlayabilirsin. Butonun basılmış olma durumuna göre değişir.
+      obscureText: true,
       decoration: InputDecoration(
         //suffix: ,
         suffixIcon: IconButton(
@@ -128,8 +167,15 @@ class SignUpView extends StatelessWidget {
     );
   }
 
-  TextField textFieldEmail() {
-    return TextField(
+  TextFormField textFieldEmail() {
+    return TextFormField(
+      validator: (val) {
+        if (val!.trim() == "") {
+          return "Check your Email!";
+        }
+        return null;
+      },
+      controller: _controller.emailController,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -143,8 +189,16 @@ class SignUpView extends StatelessWidget {
     );
   }
 
-  TextField textFieldUsername() {
-    return TextField(
+  TextFormField textFieldUsername() {
+    return TextFormField(
+      validator: (val) {
+        if (val!.trim() == "") {
+          return "Check your username!";
+        }
+        return null;
+      },
+      controller: _controller.usernameController,
+      //controller: ,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
