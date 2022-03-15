@@ -4,7 +4,7 @@ import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/core/controllers/signup/signup_controllers.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
-import 'package:real_time_chat_app/view/authentication/service/authentication_service.dart';
+import 'package:real_time_chat_app/view/authentication/service/email_authentication_service.dart';
 
 import '../../_widgets/_component/text_field.dart';
 
@@ -94,7 +94,7 @@ class SignUpView extends StatelessWidget {
           print(
               'username: ${_controller.usernameController.text}\nEmail: ${_controller.emailController.text}\nPassword: ${_controller.passwordController.text}');
 
-          AuthenticationService.signUp(
+          EmailAuthenticationService.signUp(
               _controller.usernameController.text,
               _controller.emailController.text,
               _controller.passwordController.text);
