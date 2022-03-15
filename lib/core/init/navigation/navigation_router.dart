@@ -13,11 +13,11 @@ class NavigationRouter {
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case signUpPageRoute:
-        return _getPageRoute(const SignUpView());
+        return _getPageRoute(SignUpView());
       case logInPageRoute:
-        return _getPageRoute(const LoginView());
+        return _getPageRoute(LoginView());
       default:
-        return _getPageRoute(const LoginView());
+        return _getPageRoute(LoginView());
     }
   }
 

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
+import 'package:real_time_chat_app/core/controllers/login/login_controllers.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
 
-import '../../_widgets/_component/text_field.dart';
-
 class LoginView extends StatelessWidget {
-  const LoginView({Key? key}) : super(key: key);
+  LoginView({Key? key}) : super(key: key);
+
+  final _formkey = GlobalKey<FormState>();
+  LoginControllers _controller = Get.put(LoginControllers());
 
   @override
   Widget build(BuildContext context) {
@@ -21,47 +24,54 @@ class LoginView extends StatelessWidget {
       body: Center(
         child: Container(
           width: 350,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Hello Again!',
-                style: TextStyle(
-                    fontSize: context.mediumValue, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "Wellcome back you've",
-                style: TextStyle(color: Colors.black.withOpacity(.7)),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                'been missed',
-                style: TextStyle(color: Colors.black.withOpacity(.7)),
-              ),
-              const SizedBox(height: 30),
-              textFieldEnterUsername(),
-              const SizedBox(height: 15),
-              textFieldPassword(_visibility),
-              const SizedBox(height: 20),
-              textRecoveryPassword(),
-              const SizedBox(height: 30),
-              buttonLogin(),
-              const SizedBox(height: 25),
-              Divider(
-                color: Colors.black.withOpacity(.5),
-                thickness: .1,
-              ),
-              const SizedBox(height: 5),
-              Text(
-                'Login with',
-                style: TextStyle(color: Colors.black.withOpacity(.7)),
-              ),
-              const SizedBox(height: 35),
-              signInWithGoogle(),
-              const SizedBox(height: 50),
-              textRegisterNow(context),
-            ],
+          // TODO
+          child: Form(
+            key: _formkey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // TODO:: Enter tuşu giriş yapıyo
+                //RawKeyboardListener
+                Text(
+                  'Hello Again!',
+                  style: TextStyle(
+                      fontSize: context.mediumValue,
+                      fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  "Wellcome back you've",
+                  style: TextStyle(color: Colors.black.withOpacity(.7)),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  'been missed',
+                  style: TextStyle(color: Colors.black.withOpacity(.7)),
+                ),
+                const SizedBox(height: 30),
+                textFieldEnterUsername(),
+                const SizedBox(height: 15),
+                textFieldPassword(_visibility),
+                const SizedBox(height: 20),
+                textRecoveryPassword(),
+                const SizedBox(height: 30),
+                buttonLogin(),
+                const SizedBox(height: 25),
+                Divider(
+                  color: Colors.black.withOpacity(.5),
+                  thickness: .1,
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Login with',
+                  style: TextStyle(color: Colors.black.withOpacity(.7)),
+                ),
+                const SizedBox(height: 35),
+                signInWithGoogle(),
+                const SizedBox(height: 50),
+                textRegisterNow(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -95,7 +105,13 @@ class LoginView extends StatelessWidget {
       height: 50,
       width: 350,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          // TODOD::
+          if (!(_formkey.currentState!.validate())) return;
+
+          print(
+              'username: ${_controller.usernameController.text}\npassword: ${_controller.passwordController.text}');
+        },
         child: const Text('Login'),
         style: ElevatedButton.styleFrom(
             primary: Colors.pink,
@@ -122,10 +138,17 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  TextField textFieldPassword(bool _visibility) {
-    return TextField(
+  TextFormField textFieldPassword(bool _visibility) {
+    return TextFormField(
+      validator: (val) {
+        if (val!.trim() == "") {
+          return "Check your password!";
+        }
+        return null;
+      },
+      // TODO:: input must be greater than 3 chararcters
+      controller: _controller.passwordController,
       decoration: InputDecoration(
-        //suffix: ,
         suffixIcon: IconButton(
           icon: Icon(
             _visibility == false ? Icons.visibility : Icons.visibility_off,
@@ -149,8 +172,17 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  TextField textFieldEnterUsername() {
-    return TextField(
+  TextFormField textFieldEnterUsername() {
+    return TextFormField(
+      // TODO
+      validator: (val) {
+        if (val!.trim() == "") {
+          return "Check your username!";
+        }
+        return null;
+      },
+      // TODO:: input must be greater than 3 chararcters
+      controller: _controller.usernameController,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,

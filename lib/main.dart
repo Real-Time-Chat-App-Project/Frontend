@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
 
+import 'core/controllers/signup/signup_controllers.dart';
 import 'core/init/navigation/navigation_router.dart';
 import 'firebase_options.dart';
 import 'view/authentication/login/login_view.dart';
@@ -18,7 +20,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       //
       navigatorKey: NavigationService.instance.navigatorKey,
       onGenerateRoute: NavigationRouter.instance.generateRoute,
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: 'Real-Time Messaging',
-      home: const LoginView(),
+      home: LoginView(),
     );
   }
 }
