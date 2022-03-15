@@ -4,6 +4,8 @@ import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/core/controllers/login/login_controllers.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
+import 'package:real_time_chat_app/view/authentication/service/email_authentication_service.dart';
+import 'package:real_time_chat_app/view/authentication/service/google_authentication_service.dart';
 
 class LoginView extends StatelessWidget {
   LoginView({Key? key}) : super(key: key);
@@ -15,6 +17,9 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     //
     bool _visibility = false;
+    
+    EmailAuthenticationService.authenticationWithEmailState();
+    GoogleAuthenticationService.authenticationWithEmailState();
 
     return Scaffold(
       //
@@ -67,7 +72,7 @@ class LoginView extends StatelessWidget {
                   style: TextStyle(color: Colors.black.withOpacity(.7)),
                 ),
                 const SizedBox(height: 35),
-                signInWithGoogle(),
+                signInWithGoogle(context),
                 const SizedBox(height: 50),
                 textRegisterNow(context),
               ],
@@ -79,6 +84,8 @@ class LoginView extends StatelessWidget {
   }
 
   Row textRegisterNow(BuildContext context) {
+    // TODO::
+    //GoogleAuthenticationService.signOut(context: context);
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Text('Not a member?'),
       TextButton(
@@ -91,10 +98,12 @@ class LoginView extends StatelessWidget {
     ]);
   }
 
-  InkWell signInWithGoogle() {
+  InkWell signInWithGoogle(BuildContext context) {
     return InkWell(
       onTap: () {
         // TODO:: google sign in add
+        //GoogleAuthenticationService.signUp();
+        GoogleAuthenticationService.signInWithGoogle(context: context);
       },
       child: Image.asset('assets/icons/google.png'),
     );
