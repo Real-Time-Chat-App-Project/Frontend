@@ -50,7 +50,7 @@ class SignUpView extends StatelessWidget {
                 const SizedBox(height: 15),
                 textFieldConfirmPassword(),
                 const SizedBox(height: 75),
-                buttonSignUp(),
+                buttonSignUp(context),
                 const SizedBox(height: 25),
                 Divider(
                   color: Colors.black.withOpacity(.5),
@@ -80,24 +80,49 @@ class SignUpView extends StatelessWidget {
     ]);
   }
 
-  SizedBox buttonSignUp() {
+  ///
+  /// // TODO:: signup butonuna spinner ekle
+  ///
+  SizedBox buttonSignUp(BuildContext context) {
     return SizedBox(
       height: 50,
       width: 350,
       child: ElevatedButton(
         onPressed: () {
           if (!(_formkey.currentState!.validate())) return;
-          // TODO:: password and confirmPassword must be the same
           //AuthenticationService.signUp(
           //'emincingoz@gmail.com', '123456');
           //generateRoute(signUpPageRoute);
           print(
               'username: ${_controller.usernameController.text}\nEmail: ${_controller.emailController.text}\nPassword: ${_controller.passwordController.text}');
 
-          EmailAuthenticationService.signUp(
-              _controller.usernameController.text,
-              _controller.emailController.text,
-              _controller.passwordController.text);
+          // password and confirmPassword must be the same and greater than 5
+          if (_controller.passwordController.text.length > 6 &&
+              _controller.passwordController.text ==
+                  _controller.confirmPasswordController.text) {
+            EmailAuthenticationService.signUp(
+                _controller.usernameController.text,
+                _controller.emailController.text,
+                _controller.passwordController.text);
+          } else if (_controller.passwordController.text !=
+              _controller.confirmPasswordController.text) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Passwords must be the same'),
+              backgroundColor: Colors.blueGrey,
+              duration: Duration(milliseconds: 1100),
+            ));
+          } else if (_controller.passwordController.text.length <= 5 &&
+              _controller.confirmPasswordController.text.length <= 5) {
+            // TODO::
+            //return SnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Password must be at least 6 letters'),
+              backgroundColor: Colors.blueGrey,
+              duration: Duration(milliseconds: 1100),
+            ));
+          } else {
+            // TODO::
+          }
         },
         child: const Text('Sign Up'),
         style: ElevatedButton.styleFrom(
