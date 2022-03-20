@@ -10,6 +10,7 @@ class SignUpControllers extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  var passwordVisibilityController = false.obs;
 
   //_username.value = usernameController.text;
   //get username => _username.value;

@@ -60,6 +60,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '197161488651',
     projectId: 'real-time-chat-app-5f7ba',
     storageBucket: 'real-time-chat-app-5f7ba.appspot.com',
+    androidClientId: '197161488651-sp68q2ndma24ar76d643vbn0nlvh9aho.apps.googleusercontent.com',
     iosClientId: '197161488651-gasv2el86tvdhr3p46tenccci4qq20ms.apps.googleusercontent.com',
     iosBundleId: 'com.emincingoz.realtime-chat-app',
   );
