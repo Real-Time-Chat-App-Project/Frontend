@@ -1,12 +1,11 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/core/controllers/signup/signup_controllers.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
-import 'package:real_time_chat_app/view/authentication/service/email_authentication_service.dart';
-
-import '../../_widgets/_component/text_field.dart';
+import 'package:real_time_chat_app/view/authentication/service/authentication.dart';
 
 class SignUpView extends StatelessWidget {
   SignUpView({Key? key}) : super(key: key);
@@ -17,9 +16,6 @@ class SignUpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //
-    bool _visibility = false;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Center(
@@ -46,7 +42,7 @@ class SignUpView extends StatelessWidget {
                 const SizedBox(height: 15),
                 textFieldEmail(),
                 const SizedBox(height: 15),
-                textFieldPassword(_visibility),
+                textFieldPassword(),
                 const SizedBox(height: 15),
                 textFieldConfirmPassword(),
                 const SizedBox(height: 75),
@@ -96,30 +92,26 @@ class SignUpView extends StatelessWidget {
           print(
               'username: ${_controller.usernameController.text}\nEmail: ${_controller.emailController.text}\nPassword: ${_controller.passwordController.text}');
 
+          // TODO:: check verified email
+          //Authentication().checkEmailVerified(context);
+
           // password and confirmPassword must be the same and greater than 5
-          if (_controller.passwordController.text.length > 6 &&
+          if (_controller.passwordController.text.length > 5 &&
               _controller.passwordController.text ==
                   _controller.confirmPasswordController.text) {
-            EmailAuthenticationService.signUp(
-                _controller.usernameController.text,
-                _controller.emailController.text,
-                _controller.passwordController.text);
+            Authentication().createUserWithEmailAndPassword(
+                context: context,
+                username: _controller.usernameController.text,
+                email: _controller.emailController.text,
+                password: _controller.passwordController.text);
           } else if (_controller.passwordController.text !=
               _controller.confirmPasswordController.text) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Passwords must be the same'),
-              backgroundColor: Colors.blueGrey,
-              duration: Duration(milliseconds: 1100),
-            ));
+            customFlushbar(context, message: 'Passwords must be the same');
           } else if (_controller.passwordController.text.length <= 5 &&
               _controller.confirmPasswordController.text.length <= 5) {
             // TODO::
-            //return SnackBar();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Password must be at least 6 letters'),
-              backgroundColor: Colors.blueGrey,
-              duration: Duration(milliseconds: 1100),
-            ));
+            customFlushbar(context,
+                message: 'Password must be at least 6 characters');
           } else {
             // TODO::
           }
@@ -133,6 +125,18 @@ class SignUpView extends StatelessWidget {
     );
   }
 
+  Flushbar<dynamic> customFlushbar(BuildContext context, {message}) {
+    return Flushbar(
+      message: message,
+      duration: const Duration(milliseconds: 1200),
+      backgroundColor: Colors.blueGrey,
+      flushbarPosition: FlushbarPosition.TOP,
+      margin: EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(8),
+      isDismissible: true,
+    )..show(context);
+  }
+
   TextFormField textFieldConfirmPassword() {
     return TextFormField(
       validator: (val) {
@@ -142,6 +146,7 @@ class SignUpView extends StatelessWidget {
         return null;
       },
       controller: _controller.confirmPasswordController,
+      obscureText: true,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -155,38 +160,44 @@ class SignUpView extends StatelessWidget {
     );
   }
 
-  TextFormField textFieldPassword(bool _visibility) {
-    return TextFormField(
-      validator: (val) {
-        if (val!.trim() == "") {
-          return "Check your Password!";
-        }
-        return null;
-      },
-      controller: _controller.passwordController,
-      // TODO::
-      // Şifre gizlemek için bunu da SignupController içerisinde tanımlayabilirsin. Butonun basılmış olma durumuna göre değişir.
-      obscureText: true,
-      decoration: InputDecoration(
-        //suffix: ,
-        suffixIcon: IconButton(
-          icon: Icon(
-            _visibility == false ? Icons.visibility : Icons.visibility_off,
-            color: Colors.black.withOpacity(.2),
+  Widget textFieldPassword() {
+    return Obx(
+      () => TextFormField(
+        validator: (val) {
+          if (val!.trim() == "") {
+            return "Check your Password!";
+          }
+          return null;
+        },
+        controller: _controller.passwordController,
+        // TODO::
+        // Şifre gizlemek için bunu da SignupController içerisinde tanımlayabilirsin. Butonun basılmış olma durumuna göre değişir.
+        obscureText: _controller.passwordVisibilityController.value,
+        decoration: InputDecoration(
+          //suffix: ,
+          suffixIcon: IconButton(
+            icon: Icon(
+              _controller.passwordVisibilityController.value == false
+                  ? Icons.visibility
+                  : Icons.visibility_off,
+              color: Colors.black.withOpacity(.2),
+            ),
+            onPressed: () {
+              ///
+              /// TODO::Riverpod ile takip edilecek. Visibility değişmesi durumunda textfielda yansıtacak.
+              ///
+              _controller.passwordVisibilityController.value =
+                  !_controller.passwordVisibilityController.value;
+            },
           ),
-          onPressed: () {
-            ///
-            /// TODO::Riverpod ile takip edilecek. Visibility değişmesi durumunda textfielda yansıtacak.
-            ///
-          },
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        //labelText: 'Password',
-        hintText: 'Password',
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(20),
+          filled: true,
+          fillColor: Colors.white,
+          //labelText: 'Password',
+          hintText: 'Password',
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
       ),
     );

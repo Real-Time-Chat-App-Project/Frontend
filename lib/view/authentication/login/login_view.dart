@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/core/controllers/login/login_controllers.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
-import 'package:real_time_chat_app/view/authentication/service/email_authentication_service.dart';
-import 'package:real_time_chat_app/view/authentication/service/google_authentication_service.dart';
+import 'package:real_time_chat_app/view/authentication/service/authentication.dart';
+
+import '../../_widgets/_component/checkbox.dart';
 
 class LoginView extends StatelessWidget {
   LoginView({Key? key}) : super(key: key);
@@ -13,13 +15,32 @@ class LoginView extends StatelessWidget {
   final _formkey = GlobalKey<FormState>();
   LoginControllers _controller = Get.put(LoginControllers());
 
+  late Box box;
+
+  /*void createBox() async {
+    box = await Hive.openBox('logindata');
+  }*/
+
+  /*void login() {
+    if (_controller.rememberSignedController.value) {
+      box.put('email', _controller.emailController.value.text);
+      box.put('password', _controller.passwordController.value.text);
+    }
+  }
+
+  void getData() async {
+    if (box.get('email') != null) {
+      _controller.emailController.value = box.get('email');
+      /*_controller.emailController.value.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length));*/
+    }
+
+    if (box.get('password') != null) {}
+  }*/
+
   @override
   Widget build(BuildContext context) {
-    //
-    bool _visibility = false;
-    
-    EmailAuthenticationService.authenticationWithEmailState();
-    GoogleAuthenticationService.authenticationWithEmailState();
+    Authentication().authStateChanges();
 
     return Scaffold(
       //
@@ -54,13 +75,21 @@ class LoginView extends StatelessWidget {
                   style: TextStyle(color: Colors.black.withOpacity(.7)),
                 ),
                 const SizedBox(height: 30),
-                textFieldEnterUsername(),
+                textFieldEnterEmail(),
                 const SizedBox(height: 15),
-                textFieldPassword(_visibility),
+                textFieldPassword(),
                 const SizedBox(height: 20),
-                textRecoveryPassword(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const checkboxRememberLogin(),
+                    //checkboxRememberLogin(),
+                    textRecoveryPassword(),
+                  ],
+                ),
+
                 const SizedBox(height: 30),
-                buttonLogin(),
+                buttonLogin(context),
                 const SizedBox(height: 25),
                 Divider(
                   color: Colors.black.withOpacity(.5),
@@ -83,6 +112,16 @@ class LoginView extends StatelessWidget {
     );
   }
 
+  /*Row checkboxRememberLogin() => Row(
+        children: [
+          checkboxRememberLogin(),
+          Text(
+            'Remember me',
+            style: TextStyle(color: Colors.black.withOpacity(.5)),
+          ),
+        ],
+      );*/
+
   Row textRegisterNow(BuildContext context) {
     // TODO::
     //GoogleAuthenticationService.signOut(context: context);
@@ -101,25 +140,66 @@ class LoginView extends StatelessWidget {
   InkWell signInWithGoogle(BuildContext context) {
     return InkWell(
       onTap: () {
-        // TODO:: google sign in add
+        // TODO:: google sign in add in authentication
         //GoogleAuthenticationService.signUp();
-        GoogleAuthenticationService.signInWithGoogle(context: context);
+        Authentication().signInWithGoogle(context);
       },
       child: Image.asset('assets/icons/google.png'),
     );
   }
 
-  SizedBox buttonLogin() {
+  SizedBox buttonLogin(BuildContext context) {
     return SizedBox(
       height: 50,
       width: 350,
       child: ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
           // TODOD::
           if (!(_formkey.currentState!.validate())) return;
 
+          // TODO:: verify authentication
+
+          // TODO:: signout durumunu kaldır buradan en son
+          //Authentication().signOut();
+
+          var flag = await Authentication().signInWithEmailAndPassword(
+              context,
+              _controller.emailController.text,
+              _controller.passwordController.text);
+
+          if (flag == true) {
+            NavigationService.instance
+                .navigateToPage(path: homePageRoute, data: '_');
+          }
+
+          //
+          //
+          // Hive operations
+          var box = await Hive.openBox('logindata');
+
+          ///
+          /// if remember me is checked then put/save email and password to hive
+          ///
+          if (_controller.rememberSignedController.value) {
+            box.put('email', _controller.emailController.value.text);
+            box.put('password', _controller.passwordController.value.text);
+          }
+
+          ///
+          /// if remember me is unchecked then clear the hive storage
+          ///
+          if (!_controller.rememberSignedController.value) {
+            debugPrint('cleared');
+            await Hive.box('logindata').clear();
+          }
+
+          box.close();
+
+          /*NavigationService.instance
+              .navigateToPage(path: homePageRoute, data: '_');*/
+
           print(
-              'username: ${_controller.usernameController.text}\npassword: ${_controller.passwordController.text}');
+              'email: ${_controller.emailController.text}\npassword: ${_controller.passwordController.text}');
         },
         child: const Text('Login'),
         style: ElevatedButton.styleFrom(
@@ -130,73 +210,75 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  Row textRecoveryPassword() {
-    return Row(
-      children: [
-        Expanded(child: Container()),
-        InkWell(
-          onTap: () {
-            // TODO:: Password Recovery
-          },
-          child: Text(
-            'Recovery Password',
-            style: TextStyle(color: Colors.black.withOpacity(.5)),
-          ),
-        ),
-      ],
+  InkWell textRecoveryPassword() {
+    return InkWell(
+      onTap: () {
+        // TODO:: Password Recovery
+      },
+      child: Text(
+        'Recovery Password',
+        style: TextStyle(color: Colors.black.withOpacity(.5)),
+      ),
     );
   }
 
-  TextFormField textFieldPassword(bool _visibility) {
-    return TextFormField(
-      validator: (val) {
-        if (val!.trim() == "") {
-          return "Check your password!";
-        }
-        return null;
-      },
-      // TODO:: input must be greater than 3 chararcters
-      controller: _controller.passwordController,
-      decoration: InputDecoration(
-        suffixIcon: IconButton(
-          icon: Icon(
-            _visibility == false ? Icons.visibility : Icons.visibility_off,
-            color: Colors.black.withOpacity(.2),
+  Widget textFieldPassword() {
+    return Obx(
+      () => TextFormField(
+        validator: (val) {
+          if (val!.trim() == "") {
+            return "Check your password!";
+          }
+          return null;
+        },
+        // TODO:: input must be greater than 3 chararcters
+        controller: _controller.passwordController,
+        obscureText: _controller.passwordVisibilityController.value,
+        decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: Icon(
+              _controller.passwordVisibilityController.value == false
+                  ? Icons.visibility
+                  : Icons.visibility_off,
+              color: Colors.black.withOpacity(.2),
+            ),
+            onPressed: () {
+              ///
+              /// TODO::Riverpod ile takip edilecek. Visibility değişmesi durumunda textfielda yansıtacak.
+              ///
+              _controller.passwordVisibilityController.value =
+                  !_controller.passwordVisibilityController.value;
+            },
           ),
-          onPressed: () {
-            ///
-            /// TODO::Riverpod ile takip edilecek. Visibility değişmesi durumunda textfielda yansıtacak.
-            ///
-          },
-        ),
-        filled: true,
-        fillColor: Colors.white,
-        //labelText: 'Password',
-        hintText: 'Password',
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(20),
+          filled: true,
+          fillColor: Colors.white,
+          //labelText: 'Password',
+          hintText: 'Password',
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
       ),
     );
   }
 
-  TextFormField textFieldEnterUsername() {
+  TextFormField textFieldEnterEmail() {
     return TextFormField(
       // TODO
       validator: (val) {
         if (val!.trim() == "") {
-          return "Check your username!";
+          return "Check your email!";
         }
         return null;
       },
       // TODO:: input must be greater than 3 chararcters
-      controller: _controller.usernameController,
+      controller: _controller.emailController,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
         //labelText: 'Enter Username',
-        hintText: 'Enter Username',
+        hintText: 'Enter Email',
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
           borderRadius: BorderRadius.circular(20),
