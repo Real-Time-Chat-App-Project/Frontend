@@ -1,11 +1,14 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/core/controllers/signup/signup_controllers.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
 import 'package:real_time_chat_app/view/authentication/service/authentication.dart';
+
+import 'signup_view_model.dart';
 
 class SignUpView extends StatelessWidget {
   SignUpView({Key? key}) : super(key: key);
@@ -26,46 +29,64 @@ class SignUpView extends StatelessWidget {
           focus.focusedChild?.unfocus();
         }
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Center(
-          child: Container(
-            width: 350,
-            child: Form(
-              key: _formkey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Sign Up',
-                    style: TextStyle(
-                        fontSize: context.mediumValue,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Create an account, It's free",
-                    style: TextStyle(color: Colors.black.withOpacity(.7)),
-                  ),
-                  const SizedBox(height: 40),
-                  textFieldUsername(),
-                  const SizedBox(height: 15),
-                  textFieldEmail(),
-                  const SizedBox(height: 15),
-                  textFieldPassword(),
-                  const SizedBox(height: 15),
-                  textFieldConfirmPassword(),
-                  const SizedBox(height: 75),
-                  buttonSignUp(context),
-                  const SizedBox(height: 25),
-                  Divider(
-                    color: Colors.black.withOpacity(.5),
-                    thickness: .1,
-                  ),
-                  const SizedBox(height: 5),
-                  const SizedBox(height: 50),
-                  textLogin(context),
-                ],
+      child: RawKeyboardListener(
+        autofocus: true,
+        focusNode: FocusNode(),
+        onKey: (event) {
+          //
+          // Allows interaction when the key is released.
+          if (event is RawKeyDownEvent) {
+            //
+            // It continues to detect when the key is held down. We want it to be clicked once so the outer if condition is written
+            if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+              //
+              // when cliked enter signup button pressed
+              signupProcess(context);
+              //debugPrint('cliked enter');
+            }
+          }
+        },
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Center(
+            child: Container(
+              width: 350,
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Sign Up',
+                      style: TextStyle(
+                          fontSize: context.mediumValue,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Create an account, It's free",
+                      style: TextStyle(color: Colors.black.withOpacity(.7)),
+                    ),
+                    const SizedBox(height: 40),
+                    textFieldUsername(),
+                    const SizedBox(height: 15),
+                    textFieldEmail(),
+                    const SizedBox(height: 15),
+                    textFieldPassword(),
+                    const SizedBox(height: 15),
+                    textFieldConfirmPassword(),
+                    const SizedBox(height: 75),
+                    buttonSignUp(context),
+                    const SizedBox(height: 25),
+                    Divider(
+                      color: Colors.black.withOpacity(.5),
+                      thickness: .1,
+                    ),
+                    const SizedBox(height: 5),
+                    const SizedBox(height: 50),
+                    textLogin(context),
+                  ],
+                ),
               ),
             ),
           ),
@@ -100,29 +121,7 @@ class SignUpView extends StatelessWidget {
           print(
               'username: ${_controller.usernameController.text}\nEmail: ${_controller.emailController.text}\nPassword: ${_controller.passwordController.text}');
 
-          // TODO:: check verified email
-          //Authentication().checkEmailVerified(context);
-
-          // password and confirmPassword must be the same and greater than 5
-          if (_controller.passwordController.text.length > 5 &&
-              _controller.passwordController.text ==
-                  _controller.confirmPasswordController.text) {
-            Authentication().createUserWithEmailAndPassword(
-                context: context,
-                username: _controller.usernameController.text,
-                email: _controller.emailController.text,
-                password: _controller.passwordController.text);
-          } else if (_controller.passwordController.text !=
-              _controller.confirmPasswordController.text) {
-            customFlushbar(context, message: 'Passwords must be the same');
-          } else if (_controller.passwordController.text.length <= 5 &&
-              _controller.confirmPasswordController.text.length <= 5) {
-            // TODO::
-            customFlushbar(context,
-                message: 'Password must be at least 6 characters');
-          } else {
-            // TODO::
-          }
+          signupProcess(context);
         },
         child: const Text('Sign Up'),
         style: ElevatedButton.styleFrom(
@@ -131,18 +130,6 @@ class SignUpView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20))),
       ),
     );
-  }
-
-  Flushbar<dynamic> customFlushbar(BuildContext context, {message}) {
-    return Flushbar(
-      message: message,
-      duration: const Duration(milliseconds: 1200),
-      backgroundColor: Colors.blueGrey,
-      flushbarPosition: FlushbarPosition.TOP,
-      margin: EdgeInsets.all(8),
-      borderRadius: BorderRadius.circular(8),
-      isDismissible: true,
-    )..show(context);
   }
 
   TextFormField textFieldConfirmPassword() {
