@@ -9,3 +9,5 @@
 * get: ^4.6.1
 * cloud_firestore: ^3.1.10
 * another_flushbar: ^1.10.28
+* hive: ^2.1.0
+* hive_flutter: ^1.1.0

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kartal/kartal.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/core/controllers/login/login_controllers.dart';
@@ -13,6 +14,29 @@ class LoginView extends StatelessWidget {
 
   final _formkey = GlobalKey<FormState>();
   LoginControllers _controller = Get.put(LoginControllers());
+
+  late Box box;
+
+  /*void createBox() async {
+    box = await Hive.openBox('logindata');
+  }*/
+
+  /*void login() {
+    if (_controller.rememberSignedController.value) {
+      box.put('email', _controller.emailController.value.text);
+      box.put('password', _controller.passwordController.value.text);
+    }
+  }
+
+  void getData() async {
+    if (box.get('email') != null) {
+      _controller.emailController.value = box.get('email');
+      /*_controller.emailController.value.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length));*/
+    }
+
+    if (box.get('password') != null) {}
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +171,29 @@ class LoginView extends StatelessWidget {
             NavigationService.instance
                 .navigateToPage(path: homePageRoute, data: '_');
           }
+
+          //
+          //
+          // Hive operations
+          var box = await Hive.openBox('logindata');
+
+          ///
+          /// if remember me is checked then put/save email and password to hive
+          ///
+          if (_controller.rememberSignedController.value) {
+            box.put('email', _controller.emailController.value.text);
+            box.put('password', _controller.passwordController.value.text);
+          }
+
+          ///
+          /// if remember me is unchecked then clear the hive storage
+          ///
+          if (!_controller.rememberSignedController.value) {
+            debugPrint('cleared');
+            await Hive.box('logindata').clear();
+          }
+
+          box.close();
 
           /*NavigationService.instance
               .navigateToPage(path: homePageRoute, data: '_');*/

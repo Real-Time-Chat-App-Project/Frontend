@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
           const SizedBox(height: 20),
           ElevatedButton(
               onPressed: () {
-                Authentication().signOut();
+                //Authentication().signOut();
                 NavigationService.instance
                     .navigateToPage(path: logInPageRoute, data: '_');
               },

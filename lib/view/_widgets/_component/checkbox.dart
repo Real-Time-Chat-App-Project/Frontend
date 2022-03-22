@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../core/controllers/login/login_controllers.dart';
 
@@ -22,7 +23,22 @@ class _checkboxRememberLoginState extends State<checkboxRememberLogin> {
       children: [
         Checkbox(
           value: _controller.rememberSignedController.value,
-          onChanged: (value) {
+          onChanged: (value) async {
+            /*var box = await Hive.openBox('logindata');
+            if (value == true) {
+              // TODO::
+              box.put('email', _controller.emailController.value.text);
+              box.put('password', _controller.passwordController.value.text);
+
+              debugPrint('trueeeee');
+            }
+            if (value == false) {
+              // chekbox temizse boxu temizle
+              await Hive.box('logindata').clear();
+              debugPrint('cleared');
+            }
+            // işi bitince boxu kapat.
+            box.close();*/
             setState(
               () {
                 _controller.rememberSignedController.value = value!;

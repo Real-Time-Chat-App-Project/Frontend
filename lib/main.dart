@@ -7,16 +7,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:real_time_chat_app/core/constants/navigation/routes.dart';
 import 'package:real_time_chat_app/core/controllers/login/login_controllers.dart';
 import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart';
-import 'package:real_time_chat_app/view/authentication/service/authentication_service.dart';
-import 'package:real_time_chat_app/view/authentication/signup/signup_view.dart';
 
-import 'core/controllers/signup/signup_controllers.dart';
 import 'core/init/navigation/navigation_router.dart';
 import 'firebase_options.dart';
-import 'view/authentication/login/login_view.dart';
-import 'view/authentication/login/login_view.dart';
 import 'view/authentication/service/authentication.dart';
-import 'view/home/home_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,87 +18,76 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  //await Hive.initFlutter();
+  await Hive.initFlutter();
+  //await Hive.openBox('logindata');
 
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
+class MyApp extends StatelessWidget {
+  MyApp({Key? key}) : super(key: key);
 
-class _MyAppState extends State<MyApp> {
-  //
-  User? _user;
+  //LoginControllers _controller = Get.put(LoginControllers());
+  Box? box;
 
-  LoginControllers _controller = Get.put(LoginControllers());
+  Future<String> _getCurrentRoute() async {
+    //
+    // TODO:: if signed out then clear the hive storage. Not here where it needs to be. REMEMBER
+    box = await Hive.openBox('logindata');
 
-  String? _route;
+    var email = box?.get('email');
 
-  Future<String?> _getCurrentRoute() async {
-    bool? temp;
+    var password = box?.get('password');
 
-    await _controller.signedinController.listen((value) async {
-      temp = await value;
-      debugPrint('here: ${temp.toString()}');
-    });
+    String? _route;
 
-    setState(() {
-      debugPrint('temp: ${temp}');
-
-      if (temp == true) _route = homePageRoute;
+    if (email != null && password != null) {
+      _route = homePageRoute;
+    } else {
       _route = logInPageRoute;
-    });
+    }
 
     return _route;
   }
 
-  void func() {
-    _getCurrentRoute();
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    func();
-  }
-
-  //var _controller = LoginControllers();
   @override
   Widget build(BuildContext context) {
-    return _getCurrentRoute == null
-        ? Container()
-        : GetMaterialApp(
-            //
-            navigatorKey: NavigationService.instance.navigatorKey,
-            onGenerateRoute: NavigationRouter.instance.generateRoute,
-            initialRoute: _route,
+    return FutureBuilder<String>(
+      future: _getCurrentRoute(),
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return Container();
+        else {
+          if (snapshot.hasError)
+            return Center(child: Text('Error: ${snapshot.error}'));
+          else {
+            debugPrint('data : ${snapshot.data}');
+            return GetMaterialApp(
+              //
+              navigatorKey: NavigationService.instance.navigatorKey,
+              onGenerateRoute: NavigationRouter.instance.generateRoute,
+              initialRoute: snapshot.data,
 
-            theme: ThemeData(
-              scaffoldBackgroundColor: Color(0xffff4eef2),
-              //scaffoldBackgroundColor: Colors.grey.withOpacity(.2),
-              //scaffoldBackgroundColor: Colors.amber,
-              pageTransitionsTheme: const PageTransitionsTheme(
-                builders: {
-                  TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-                  TargetPlatform.fuchsia: FadeUpwardsPageTransitionsBuilder(),
-                  TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
-                  TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
-                  TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
-                },
+              theme: ThemeData(
+                scaffoldBackgroundColor: Color(0xffff4eef2),
+                //scaffoldBackgroundColor: Colors.grey.withOpacity(.2),
+                //scaffoldBackgroundColor: Colors.amber,
+                pageTransitionsTheme: const PageTransitionsTheme(
+                  builders: {
+                    TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+                    TargetPlatform.fuchsia: FadeUpwardsPageTransitionsBuilder(),
+                    TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
+                    TargetPlatform.linux: FadeUpwardsPageTransitionsBuilder(),
+                    TargetPlatform.windows: FadeUpwardsPageTransitionsBuilder(),
+                  },
+                ),
               ),
-            ),
-            debugShowCheckedModeBanner: false,
-            title: 'Real-Time Messaging',
-            // TODO:: signed in signed out control
-            //_checkUser() != null ? LoginView() : SignUpView()
-            //home:
-            //    Center(child: Text(_controller.signedinController.value.toString())),
-            /*home: Obx(() => _controller.signedinController.value
-            ? LoginView()
-            : const HomePage()),*/
-          );
+              debugShowCheckedModeBanner: false,
+              title: 'Real-Time Messaging',
+            );
+          }
+        }
+      },
+    );
   }
 }
