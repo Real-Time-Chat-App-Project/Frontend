@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kartal/kartal.dart';
@@ -8,6 +9,7 @@ import 'package:real_time_chat_app/core/init/navigation/navigation_service.dart'
 import 'package:real_time_chat_app/view/authentication/service/authentication.dart';
 
 import '../../_widgets/_component/checkbox.dart';
+import 'login_view_model.dart';
 
 class LoginView extends StatelessWidget {
   LoginView({Key? key}) : super(key: key);
@@ -21,79 +23,97 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     Authentication().authStateChanges();
 
-    return GestureDetector(
-      onTap: () {
-        ///
-        /// When clicking outside the textfields, hides keyboard
-        ///
-        FocusScopeNode focus = FocusScope.of(context);
-        if (!focus.hasPrimaryFocus && focus.focusedChild != null) {
-          focus.focusedChild?.unfocus();
+    return RawKeyboardListener(
+      autofocus: true,
+      focusNode: FocusNode(),
+      onKey: (event) {
+        //
+        // Allows interaction when the key is released.
+        if (event is RawKeyDownEvent) {
+          //
+          // It continues to detect when the key is held down. We want it to be clicked once so the outer if condition is written
+          if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+            //
+            // when cliked enter login button is pressed
+            loginOperation(context);
+            debugPrint('cliked enter');
+          }
         }
       },
-      child: Scaffold(
-        //
-        // to control the widgets when the keyboard slides up and slides back down.
-        // When true, the layout of the widgets scrolls when the keyboard is opened. And gives an error.
-        resizeToAvoidBottomInset: false,
-        body: Center(
-          child: Container(
-            width: 350,
-            // TODO
-            child: Form(
-              key: _formkey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // TODO:: Enter tuşu giriş yapıyo
-                  //RawKeyboardListener
-                  Text(
-                    'Hello Again!',
-                    style: TextStyle(
-                        fontSize: context.mediumValue,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Wellcome back you've",
-                    style: TextStyle(color: Colors.black.withOpacity(.7)),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    'been missed',
-                    style: TextStyle(color: Colors.black.withOpacity(.7)),
-                  ),
-                  const SizedBox(height: 30),
-                  textFieldEnterEmail(),
-                  const SizedBox(height: 15),
-                  textFieldPassword(),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const checkboxRememberLogin(),
-                      //checkboxRememberLogin(),
-                      textRecoveryPassword(),
-                    ],
-                  ),
+      child: GestureDetector(
+        onTap: () {
+          ///
+          /// When clicking outside the textfields, hides keyboard
+          ///
+          FocusScopeNode focus = FocusScope.of(context);
+          if (!focus.hasPrimaryFocus && focus.focusedChild != null) {
+            focus.focusedChild?.unfocus();
+          }
+        },
+        child: Scaffold(
+          //
+          // to control the widgets when the keyboard slides up and slides back down.
+          // When true, the layout of the widgets scrolls when the keyboard is opened. And gives an error.
+          resizeToAvoidBottomInset: false,
+          body: Center(
+            child: Container(
+              width: 350,
+              // TODO
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // TODO:: Enter tuşu giriş yapıyo
+                    //RawKeyboardListener
+                    Text(
+                      'Hello Again!',
+                      style: TextStyle(
+                          fontSize: context.mediumValue,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      "Wellcome back you've",
+                      style: TextStyle(color: Colors.black.withOpacity(.7)),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      'been missed',
+                      style: TextStyle(color: Colors.black.withOpacity(.7)),
+                    ),
+                    const SizedBox(height: 30),
+                    textFieldEnterEmail(),
+                    const SizedBox(height: 15),
+                    textFieldPassword(),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const checkboxRememberLogin(),
+                        //checkboxRememberLogin(),
+                        textRecoveryPassword(),
+                      ],
+                    ),
 
-                  const SizedBox(height: 30),
-                  buttonLogin(context),
-                  const SizedBox(height: 25),
-                  Divider(
-                    color: Colors.black.withOpacity(.5),
-                    thickness: .1,
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Login with',
-                    style: TextStyle(color: Colors.black.withOpacity(.7)),
-                  ),
-                  const SizedBox(height: 35),
-                  signInWithGoogle(context),
-                  const SizedBox(height: 50),
-                  textRegisterNow(context),
-                ],
+                    const SizedBox(height: 30),
+                    buttonLogin(context),
+                    const SizedBox(height: 25),
+                    Divider(
+                      color: Colors.black.withOpacity(.5),
+                      thickness: .1,
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Login with',
+                      style: TextStyle(color: Colors.black.withOpacity(.7)),
+                    ),
+                    const SizedBox(height: 35),
+                    signInWithGoogle(context),
+                    const SizedBox(height: 50),
+                    textRegisterNow(context),
+                  ],
+                ),
               ),
             ),
           ),
@@ -102,19 +122,8 @@ class LoginView extends StatelessWidget {
     );
   }
 
-  /*Row checkboxRememberLogin() => Row(
-        children: [
-          checkboxRememberLogin(),
-          Text(
-            'Remember me',
-            style: TextStyle(color: Colors.black.withOpacity(.5)),
-          ),
-        ],
-      );*/
-
   Row textRegisterNow(BuildContext context) {
     // TODO::
-    //GoogleAuthenticationService.signOut(context: context);
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Text('Not a member?'),
       TextButton(
@@ -130,8 +139,6 @@ class LoginView extends StatelessWidget {
   InkWell signInWithGoogle(BuildContext context) {
     return InkWell(
       onTap: () {
-        // TODO:: google sign in add in authentication
-        //GoogleAuthenticationService.signUp();
         Authentication().signInWithGoogle(context);
       },
       child: Image.asset('assets/icons/google.png'),
@@ -147,46 +154,8 @@ class LoginView extends StatelessWidget {
           // TODOD::
           if (!(_formkey.currentState!.validate())) return;
 
-          // TODO:: verify authentication
-
-          // TODO:: signout durumunu kaldır buradan en son
-          //Authentication().signOut();
-
-          var flag = await Authentication().signInWithEmailAndPassword(
-              context,
-              _controller.emailController.text,
-              _controller.passwordController.text);
-
-          if (flag == true) {
-            NavigationService.instance
-                .navigateToPage(path: homePageRoute, data: '_');
-          }
-
-          //
-          //
-          // Hive operations
-          var box = await Hive.openBox('logindata');
-
-          ///
-          /// if remember me is checked then put/save email and password to hive
-          ///
-          if (_controller.rememberSignedController.value) {
-            box.put('email', _controller.emailController.value.text);
-            box.put('password', _controller.passwordController.value.text);
-          }
-
-          ///
-          /// if remember me is unchecked then clear the hive storage
-          ///
-          if (!_controller.rememberSignedController.value) {
-            debugPrint('cleared');
-            await Hive.box('logindata').clear();
-          }
-
-          box.close();
-
-          /*NavigationService.instance
-              .navigateToPage(path: homePageRoute, data: '_');*/
+          // from login_view_model
+          loginOperation(context);
 
           print(
               'email: ${_controller.emailController.text}\npassword: ${_controller.passwordController.text}');
@@ -203,7 +172,7 @@ class LoginView extends StatelessWidget {
   InkWell textRecoveryPassword() {
     return InkWell(
       onTap: () {
-        // TODO:: Password Recovery
+        // TODO:: Password Recovery add
       },
       child: Text(
         'Recovery Password',
@@ -234,16 +203,12 @@ class LoginView extends StatelessWidget {
               color: Colors.black.withOpacity(.2),
             ),
             onPressed: () {
-              ///
-              /// TODO::Riverpod ile takip edilecek. Visibility değişmesi durumunda textfielda yansıtacak.
-              ///
               _controller.passwordVisibilityController.value =
                   !_controller.passwordVisibilityController.value;
             },
           ),
           filled: true,
           fillColor: Colors.white,
-          //labelText: 'Password',
           hintText: 'Password',
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
