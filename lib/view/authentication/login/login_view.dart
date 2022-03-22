@@ -17,94 +17,84 @@ class LoginView extends StatelessWidget {
 
   late Box box;
 
-  /*void createBox() async {
-    box = await Hive.openBox('logindata');
-  }*/
-
-  /*void login() {
-    if (_controller.rememberSignedController.value) {
-      box.put('email', _controller.emailController.value.text);
-      box.put('password', _controller.passwordController.value.text);
-    }
-  }
-
-  void getData() async {
-    if (box.get('email') != null) {
-      _controller.emailController.value = box.get('email');
-      /*_controller.emailController.value.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length));*/
-    }
-
-    if (box.get('password') != null) {}
-  }*/
-
   @override
   Widget build(BuildContext context) {
     Authentication().authStateChanges();
 
-    return Scaffold(
-      //
-      // to control the widgets when the keyboard slides up and slides back down.
-      // When true, the layout of the widgets scrolls when the keyboard is opened. And gives an error.
-      resizeToAvoidBottomInset: false,
-      body: Center(
-        child: Container(
-          width: 350,
-          // TODO
-          child: Form(
-            key: _formkey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // TODO:: Enter tuşu giriş yapıyo
-                //RawKeyboardListener
-                Text(
-                  'Hello Again!',
-                  style: TextStyle(
-                      fontSize: context.mediumValue,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  "Wellcome back you've",
-                  style: TextStyle(color: Colors.black.withOpacity(.7)),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  'been missed',
-                  style: TextStyle(color: Colors.black.withOpacity(.7)),
-                ),
-                const SizedBox(height: 30),
-                textFieldEnterEmail(),
-                const SizedBox(height: 15),
-                textFieldPassword(),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const checkboxRememberLogin(),
-                    //checkboxRememberLogin(),
-                    textRecoveryPassword(),
-                  ],
-                ),
+    return GestureDetector(
+      onTap: () {
+        ///
+        /// When clicking outside the textfields, hides keyboard
+        ///
+        FocusScopeNode focus = FocusScope.of(context);
+        if (!focus.hasPrimaryFocus && focus.focusedChild != null) {
+          focus.focusedChild?.unfocus();
+        }
+      },
+      child: Scaffold(
+        //
+        // to control the widgets when the keyboard slides up and slides back down.
+        // When true, the layout of the widgets scrolls when the keyboard is opened. And gives an error.
+        resizeToAvoidBottomInset: false,
+        body: Center(
+          child: Container(
+            width: 350,
+            // TODO
+            child: Form(
+              key: _formkey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // TODO:: Enter tuşu giriş yapıyo
+                  //RawKeyboardListener
+                  Text(
+                    'Hello Again!',
+                    style: TextStyle(
+                        fontSize: context.mediumValue,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Wellcome back you've",
+                    style: TextStyle(color: Colors.black.withOpacity(.7)),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'been missed',
+                    style: TextStyle(color: Colors.black.withOpacity(.7)),
+                  ),
+                  const SizedBox(height: 30),
+                  textFieldEnterEmail(),
+                  const SizedBox(height: 15),
+                  textFieldPassword(),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const checkboxRememberLogin(),
+                      //checkboxRememberLogin(),
+                      textRecoveryPassword(),
+                    ],
+                  ),
 
-                const SizedBox(height: 30),
-                buttonLogin(context),
-                const SizedBox(height: 25),
-                Divider(
-                  color: Colors.black.withOpacity(.5),
-                  thickness: .1,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Login with',
-                  style: TextStyle(color: Colors.black.withOpacity(.7)),
-                ),
-                const SizedBox(height: 35),
-                signInWithGoogle(context),
-                const SizedBox(height: 50),
-                textRegisterNow(context),
-              ],
+                  const SizedBox(height: 30),
+                  buttonLogin(context),
+                  const SizedBox(height: 25),
+                  Divider(
+                    color: Colors.black.withOpacity(.5),
+                    thickness: .1,
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    'Login with',
+                    style: TextStyle(color: Colors.black.withOpacity(.7)),
+                  ),
+                  const SizedBox(height: 35),
+                  signInWithGoogle(context),
+                  const SizedBox(height: 50),
+                  textRegisterNow(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -234,6 +224,7 @@ class LoginView extends StatelessWidget {
         // TODO:: input must be greater than 3 chararcters
         controller: _controller.passwordController,
         obscureText: _controller.passwordVisibilityController.value,
+        cursorColor: Colors.blueGrey,
         decoration: InputDecoration(
           suffixIcon: IconButton(
             icon: Icon(
@@ -272,6 +263,7 @@ class LoginView extends StatelessWidget {
         }
         return null;
       },
+      cursorColor: Colors.blueGrey,
       // TODO:: input must be greater than 3 chararcters
       controller: _controller.emailController,
       decoration: InputDecoration(
