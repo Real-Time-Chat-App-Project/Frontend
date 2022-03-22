@@ -24,6 +24,7 @@ class Authentication implements AuthBase {
 
   void _createNewUserInFirestore(String? username, String? email) async {
     final User? user = await currentUser;
+
     final CollectionReference<Map<String, dynamic>> usersRef =
         FirebaseFirestore.instance.collection('users');
     usersRef.doc(user?.uid).set({
@@ -166,14 +167,16 @@ class Authentication implements AuthBase {
 
       if (userCredential.user!.emailVerified) {
         // TODO:: mesajlaşma bölümüne geç
-        return true;
         print('Başarıyla giriş yapıldı');
+        return true;
       } else {
         _showVerifyEmailDialog(context, userCredential);
         return false;
       }
     } catch (e) {
       // TODO:: alert dialog giriş yapılamadı
+
+      // TODO:: email eşleşmiyorsa email kayıtlı değil hatası versin
 
       customFlushbar(
           context, 'Email or Password is incorrect please try again');

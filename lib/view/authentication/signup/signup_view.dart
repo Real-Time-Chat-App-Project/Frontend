@@ -16,46 +16,57 @@ class SignUpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Center(
-        child: Container(
-          width: 350,
-          child: Form(
-            key: _formkey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Sign Up',
-                  style: TextStyle(
-                      fontSize: context.mediumValue,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  "Create an account, It's free",
-                  style: TextStyle(color: Colors.black.withOpacity(.7)),
-                ),
-                const SizedBox(height: 40),
-                textFieldUsername(),
-                const SizedBox(height: 15),
-                textFieldEmail(),
-                const SizedBox(height: 15),
-                textFieldPassword(),
-                const SizedBox(height: 15),
-                textFieldConfirmPassword(),
-                const SizedBox(height: 75),
-                buttonSignUp(context),
-                const SizedBox(height: 25),
-                Divider(
-                  color: Colors.black.withOpacity(.5),
-                  thickness: .1,
-                ),
-                const SizedBox(height: 5),
-                const SizedBox(height: 50),
-                textLogin(context),
-              ],
+    return GestureDetector(
+      onTap: () {
+        ///
+        /// When clicking outside the textfields, hides keyboard
+        ///
+        FocusScopeNode focus = FocusScope.of(context);
+        if (!focus.hasPrimaryFocus && focus.focusedChild != null) {
+          focus.focusedChild?.unfocus();
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: Center(
+          child: Container(
+            width: 350,
+            child: Form(
+              key: _formkey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Sign Up',
+                    style: TextStyle(
+                        fontSize: context.mediumValue,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    "Create an account, It's free",
+                    style: TextStyle(color: Colors.black.withOpacity(.7)),
+                  ),
+                  const SizedBox(height: 40),
+                  textFieldUsername(),
+                  const SizedBox(height: 15),
+                  textFieldEmail(),
+                  const SizedBox(height: 15),
+                  textFieldPassword(),
+                  const SizedBox(height: 15),
+                  textFieldConfirmPassword(),
+                  const SizedBox(height: 75),
+                  buttonSignUp(context),
+                  const SizedBox(height: 25),
+                  Divider(
+                    color: Colors.black.withOpacity(.5),
+                    thickness: .1,
+                  ),
+                  const SizedBox(height: 5),
+                  const SizedBox(height: 50),
+                  textLogin(context),
+                ],
+              ),
             ),
           ),
         ),
@@ -86,9 +97,6 @@ class SignUpView extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           if (!(_formkey.currentState!.validate())) return;
-          //AuthenticationService.signUp(
-          //'emincingoz@gmail.com', '123456');
-          //generateRoute(signUpPageRoute);
           print(
               'username: ${_controller.usernameController.text}\nEmail: ${_controller.emailController.text}\nPassword: ${_controller.passwordController.text}');
 
@@ -146,11 +154,11 @@ class SignUpView extends StatelessWidget {
         return null;
       },
       controller: _controller.confirmPasswordController,
+      cursorColor: Colors.blueGrey,
       obscureText: true,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
-        //labelText: 'Password',
         hintText: 'Confirm Password',
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
@@ -170,11 +178,9 @@ class SignUpView extends StatelessWidget {
           return null;
         },
         controller: _controller.passwordController,
-        // TODO::
-        // Şifre gizlemek için bunu da SignupController içerisinde tanımlayabilirsin. Butonun basılmış olma durumuna göre değişir.
+        cursorColor: Colors.blueGrey,
         obscureText: _controller.passwordVisibilityController.value,
         decoration: InputDecoration(
-          //suffix: ,
           suffixIcon: IconButton(
             icon: Icon(
               _controller.passwordVisibilityController.value == false
@@ -183,16 +189,12 @@ class SignUpView extends StatelessWidget {
               color: Colors.black.withOpacity(.2),
             ),
             onPressed: () {
-              ///
-              /// TODO::Riverpod ile takip edilecek. Visibility değişmesi durumunda textfielda yansıtacak.
-              ///
               _controller.passwordVisibilityController.value =
                   !_controller.passwordVisibilityController.value;
             },
           ),
           filled: true,
           fillColor: Colors.white,
-          //labelText: 'Password',
           hintText: 'Password',
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
@@ -212,10 +214,10 @@ class SignUpView extends StatelessWidget {
         return null;
       },
       controller: _controller.emailController,
+      cursorColor: Colors.blueGrey,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
-        //labelText: 'Enter Username',
         hintText: 'E-mail',
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
@@ -234,11 +236,10 @@ class SignUpView extends StatelessWidget {
         return null;
       },
       controller: _controller.usernameController,
-      //controller: ,
+      cursorColor: Colors.blueGrey,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
-        //labelText: 'Enter Username',
         hintText: 'Username',
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
